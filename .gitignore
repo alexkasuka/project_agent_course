@@ -1,0 +1,41 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Python environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python caches and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/
+
+# Local vector/index artifacts
+rag_index/
+
+# User assignments: keep folder, ignore private homework files
+assignments/*
+!assignments/.gitkeep
+
+# Course materials: keep folder, ignore copyrighted/private course files
+course_materials/*
+!course_materials/.gitkeep
+
+# Generated knowledge base
+data/*
+!data/.gitkeep
+
+# Generated homework results
+outputs/*
+!outputs/.gitkeep
