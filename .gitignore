@@ -20,17 +20,25 @@ htmlcov/
 .DS_Store
 .idea/
 .vscode/
+*.swp
+*.swo
 
-# Local vector/index artifacts
-rag_index/
+# GitHub/local CLI metadata
+.github/CODEOWNERS.local
+.github/*.local.yml
+.github/*.local.yaml
+.gh/
+
 
 # User assignments: keep folder, ignore private homework files
 assignments/*
 !assignments/.gitkeep
 
-# Course materials: keep folder, ignore copyrighted/private course files
+# Course materials: keep public demo materials, ignore private course files
 course_materials/*
 !course_materials/.gitkeep
+!course_materials/demo_*.md
+!course_materials/demo_*.ipynb
 
 # Generated knowledge base
 data/*

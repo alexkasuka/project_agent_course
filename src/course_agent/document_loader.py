@@ -87,12 +87,31 @@ def extract_ipynb_text(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def extract_markdown_text(path: Path) -> list[dict[str, Any]]:
+    text = clean_text(" ".join(path.read_text(encoding="utf-8").split()))
+    if not text:
+        return []
+    return [
+        {
+            "source": f"{path.name}:doc",
+            "title": path.stem,
+            "text": text,
+            "metadata": {
+                "file": str(path),
+                "format": "markdown",
+            },
+        }
+    ]
+
+
 def extract_document_text(path: Path) -> list[dict[str, Any]]:
     suffix = path.suffix.lower()
     if suffix == ".pdf":
         return extract_pdf_text(path)
     if suffix == ".ipynb":
         return extract_ipynb_text(path)
+    if suffix in {".md", ".markdown"}:
+        return extract_markdown_text(path)
     raise ValueError(f"Unsupported document format: {path.suffix}")
 
 
