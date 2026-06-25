@@ -37,6 +37,7 @@
 ## Структура
 
 - `src/course_agent/` — код агента;
+- `docs/PRD.md` — план доработки до дипломного проекта;
 - `scripts/ingest_course_materials.py` — индексирует материалы курса;
 - `course_materials/` — сюда кладутся PDF, Markdown и notebooks курса;
 - `assignments/` — сюда кладутся задания;
@@ -44,7 +45,20 @@
 - `run_assignment_agent.py` — запуск агента;
 - `tests/` — smoke-тесты.
 
-Граф идет по контролируемому workflow: `load_assignment` -> `retrieve_context` -> `draft_solution` -> `human_review`.
+Граф идет по контролируемому workflow с ветвлениями:
+
+```text
+load_assignment
+  -> classify_assignment
+  -> route_by_assignment_type
+       -> retrieve_context
+       -> skip_retrieval
+  -> assess_context
+  -> route_by_context_quality
+       -> draft_solution
+       -> request_clarification
+  -> human_review
+```
 
 ## Быстрый запуск
 
@@ -106,6 +120,20 @@ python run_assignment_agent.py --assignment-path assignments/homework_01.ipynb
 python run_assignment_agent.py --assignment "Собрать LangGraph-агента с State, tool и human-in-the-loop"
 ```
 
+Полезные параметры CLI:
+
+```bash
+python run_assignment_agent.py \
+  --assignment "Собрать LangGraph-агента" \
+  --output-dir outputs \
+  --json
+```
+
+- `--output-dir` — куда сохранить Markdown-результат;
+- `--json` — машинно-читаемый summary запуска;
+- `--verbose` — вывести источники в консоль;
+- `--human-decision approve|changes` — записать решение human review в результат.
+
 5. Посмотрите результат в `outputs/homework_result_*.md`.
 
 Схема пайплайна:
@@ -117,7 +145,9 @@ course_materials/*.pdf,*.ipynb,*.md
 
 assignment text или assignments/*.pdf,*.ipynb,*.md
   -> load_assignment
+  -> classify_assignment
   -> search_knowledge_base
+  -> assess_context
   -> draft_solution_with_model
   -> human_review
   -> outputs/homework_result_*.md
@@ -126,6 +156,56 @@ assignment text или assignments/*.pdf,*.ipynb,*.md
 Если OpenRouter настроен, черновик генерируется моделью. Если модель недоступна, проект всё равно создает структурированное решение через fallback.
 
 Векторная база здесь намеренно не используется: для первого каркаса достаточно JSON-индекса и keyword search. Это проще показать, легче отлаживать и не требует тяжелых локальных зависимостей.
+
+## LangFuse tracing
+
+Агент умеет отправлять traces в LangFuse через `/api/public/ingestion`. Это опционально: без ключей LangFuse проект запускается как раньше.
+
+Чтобы включить tracing:
+
+```bash
+cp .env.example .env
+# затем впишите LANGFUSE_PUBLIC_KEY и LANGFUSE_SECRET_KEY
+python run_assignment_agent.py --assignment "Создать LangGraph-систему для выполнения учебных заданий"
+```
+
+Что попадает в LangFuse:
+
+- один root trace `assignment-agent-run` на каждый запуск;
+- observation span `langgraph.invoke`;
+- отдельные observation spans для узлов графа: `load_assignment`, `classify_assignment`, `retrieve_context`, `assess_context`, `draft_solution`, `human_review`;
+- metadata по маршрутам, количеству источников, флагам риска, модели и наличию handoff.
+
+Если tracing нужно временно отключить:
+
+```bash
+DISABLE_LANGFUSE=1 python run_assignment_agent.py --assignment "Создать учебного агента"
+```
+
+## Benchmark
+
+В проекте есть первичный benchmark из 10 кейсов:
+
+```bash
+python scripts/ingest_course_materials.py
+python scripts/run_benchmark.py
+```
+
+По умолчанию benchmark отключает model calls и проверяет deterministic/fallback режим. Для проверки с реальной моделью:
+
+```bash
+python scripts/run_benchmark.py --use-model
+```
+
+Текущий локальный прогон на полном индексе материалов:
+
+```text
+total: 10
+passed: 10
+success_rate: 1.0
+retrieval_hit_rate: 0.7
+p95_latency_ms: 1073.39
+```
 
 ## OpenRouter
 

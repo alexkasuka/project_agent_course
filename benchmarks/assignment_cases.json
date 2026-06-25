@@ -1,0 +1,92 @@
+[
+  {
+    "id": "case_001",
+    "input": "Создать LangGraph агента: описать State, node, tool и human handoff.",
+    "expected_output": {
+      "must_include": ["State", "tool", "human"],
+      "must_have_citations": true,
+      "expected_route": "draft_solution"
+    }
+  },
+  {
+    "id": "case_002",
+    "input": "Создать RAG систему с метриками retrieval и answer quality.",
+    "expected_output": {
+      "must_include": ["RAG", "метрик"],
+      "must_have_citations": true,
+      "expected_route": "draft_solution"
+    }
+  },
+  {
+    "id": "case_003",
+    "input": "Объяснить зачем нужен human-in-the-loop в учебном агенте.",
+    "expected_output": {
+      "must_include": ["human", "review"],
+      "must_have_citations": true,
+      "expected_route": "draft_solution"
+    }
+  },
+  {
+    "id": "case_004",
+    "input": "Написать короткий план работы на неделю.",
+    "expected_output": {
+      "must_include": ["Решение"],
+      "must_have_citations": false,
+      "expected_route": "draft_solution"
+    }
+  },
+  {
+    "id": "case_005",
+    "input": "курс zzzzz unknown topic",
+    "expected_output": {
+      "must_include": ["Недостаточно"],
+      "must_have_citations": false,
+      "expected_route": "request_clarification"
+    }
+  },
+  {
+    "id": "case_006",
+    "input": "Сделать агент, который читает PDF и ipynb задания.",
+    "expected_output": {
+      "must_include": ["PDF", "ipynb"],
+      "must_have_citations": true,
+      "expected_route": "draft_solution"
+    }
+  },
+  {
+    "id": "case_007",
+    "input": "Описать security checklist для AI агента.",
+    "expected_output": {
+      "must_include": ["security", "checklist"],
+      "must_have_citations": false,
+      "expected_route": "draft_solution"
+    }
+  },
+  {
+    "id": "case_008",
+    "input": "Добавить LangFuse tracing и observability в агента.",
+    "expected_output": {
+      "must_include": ["LangFuse"],
+      "must_have_citations": false,
+      "expected_route": "draft_solution"
+    }
+  },
+  {
+    "id": "case_009",
+    "input": "Сохранить результат домашней работы в Markdown файл.",
+    "expected_output": {
+      "must_include": ["Markdown"],
+      "must_have_citations": false,
+      "expected_route": "draft_solution"
+    }
+  },
+  {
+    "id": "case_010",
+    "input": "Собрать benchmark из 10 запросов и посчитать success rate.",
+    "expected_output": {
+      "must_include": ["benchmark", "success"],
+      "must_have_citations": false,
+      "expected_route": "draft_solution"
+    }
+  }
+]
